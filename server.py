@@ -9,3 +9,9 @@ def start_server():
     print("")
     s.listen(5)
     print("Socket is listening...")
+
+    c, addr = s.accept()
+    print("Got connection from reverse shell in ", addr)
+
+if __name__ == "__main__":
+    start_server()
