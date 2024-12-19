@@ -18,11 +18,14 @@ def start_server():
             while s:
                 try:
                     cwd = conn.recv(1024).decode()
-                    print(cwd)
                     if len(cwd)==0:
                         print("")
-                        print("Client must have disconnected.")
+                        print("Client must have disconnected. len(cwd) == 0.")
                         break
+                    print(cwd)
+                    command = input(f"{cwd}> ")
+                    print("command is ", command.encode())
+                    conn.send(command.encode())
                 except:
                     print("Client must have disconnected.")
                     break
