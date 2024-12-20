@@ -50,7 +50,6 @@ int main(){
                     break;
                 }
                 strcat(output_buff, line);
-                strcat(output_buff, "\n");
             }
             strcat(output_buff, "cURR_dIR");
             strcat(output_buff, cwd);
