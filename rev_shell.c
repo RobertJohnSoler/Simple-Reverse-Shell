@@ -37,9 +37,10 @@ int main(){
         memset(output_buff, 0, 1024);
         receiveCommand(client_socket, cmd_buff);
         printf("%s\n", cmd_buff);
-
-        char* command = strtok(cmd_buff, " ");
-        if (strcmp(command, "cd") == 0){
+        char cmd_buff_copy[1024];
+        strcpy(cmd_buff_copy, cmd_buff);
+        char* cmd_arg1 = strtok(cmd_buff_copy, " ");
+        if (strcmp(cmd_arg1, "cd") == 0){
             // code for if the command was cd
             strcpy(cwd, &cmd_buff[3]);
             chdir(cwd);
