@@ -14,7 +14,7 @@ void receiveCommand(SOCKET client_socket, char *rsp);
 int main(){
     
     char cmd_buff[1024];
-    char output_buff[1024];
+    char output_buff[1024]; // need to figure out what to do if output is larget than 1024 bytes...
     char cwd[1024];
     FILE *output;
 
