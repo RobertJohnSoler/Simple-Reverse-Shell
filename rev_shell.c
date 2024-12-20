@@ -45,15 +45,16 @@ int main(){
             output = popen(cmd_buff, "r"); 
             while(1){
                 char line[1024];
-                int status = fscanf(output, "%[^\n]%*c", line);
-                if (status != 1){
+                char* read = fgets(line, 1024, output); // or fscanf(output, "%[^\n]%*c", line);
+                if (!read){
                     break;
                 }
                 strcat(output_buff, line);
-                strcat(output_buff, "\n");
+                // strcat(output_buff, "\n");
             }
             // printf("output buffer: %s\n", output_buff);
             sendMsg(client_socket, output_buff);
+            pclose(output);
         }
     }
     return 1;
