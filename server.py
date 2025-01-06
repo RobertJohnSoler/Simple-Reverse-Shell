@@ -35,6 +35,7 @@ def start_server():
                     output = response.split("cURR_dIR")[0]
                     cwd = response.split("cURR_dIR")[1]
                     print(output)
+                    print("")
                 except:
                     print("Client must have disconnected.")
                     break
