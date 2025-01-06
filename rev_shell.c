@@ -6,7 +6,7 @@
 
 void startWinsock();
 SOCKET startSocket();
-void connectToServer(struct sockaddr_in *serv_addr, SOCKET client_socket,  const char* server_ip);
+int connectToServer(struct sockaddr_in *serv_addr, SOCKET client_socket,  const char* server_ip);
 void closeSocket(SOCKET client_socket);
 void sendMsg(SOCKET client_socket, char *msg);
 void receiveCommand(SOCKET client_socket, char *rsp);
@@ -26,7 +26,10 @@ int main(){
 
     startWinsock();
     client_socket = startSocket();
-    connectToServer(&serv_addr, client_socket, server_ip);
+    while (connectToServer(&serv_addr, client_socket, server_ip) != 1){
+        printf("Waiting for connection...");
+        Sleep(1000);
+    }
 
     getcwd(cwd, 1024);
     sendMsg(client_socket, cwd);
@@ -91,16 +94,17 @@ SOCKET startSocket() {
     return client_socket;
 }
 
-void connectToServer(struct sockaddr_in *serv_addr, SOCKET client_socket, const char* server_ip) {
+int connectToServer(struct sockaddr_in *serv_addr, SOCKET client_socket, const char* server_ip) {
     inet_pton(AF_INET, server_ip, &serv_addr->sin_addr);
     if (connect(client_socket, (struct sockaddr *)serv_addr, sizeof(*serv_addr)) < 0) {
         printf("\nConnection Failed. \n");
         printf("%i", client_socket);
         closesocket(client_socket);
         WSACleanup();
-        exit(EXIT_FAILURE);
+        return 0;
     } else{
         printf("Client connected to server.\n");
+        return 1;
     }
 }
 
