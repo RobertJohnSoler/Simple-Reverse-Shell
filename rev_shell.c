@@ -54,7 +54,7 @@ int main(){
         } else {
             // code for any other command aside from cd
             output = popen(cmd_buff, "r"); 
-            if (output){
+            if (output != NULL){
                 while(1){
                     char line[1024];
                     char* read = fgets(line, 1024, output); 
@@ -65,6 +65,7 @@ int main(){
                     sendMsg(client_socket, line);
                 }
             } else {
+                printf("Error executing command.\n");
                 char* err_msg;
                 sprintf(err_msg, "Error executing the command %s \n", cmd_buff);
                 sendMsg(client_socket, err_msg);
