@@ -22,7 +22,7 @@ int main(){
     struct sockaddr_in serv_addr;
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(8080);
-    const char* server_ip = "127.0.0.1";
+    const char* server_ip = "10.0.0.62";
 
     startWinsock();
     client_socket = startSocket();
@@ -98,7 +98,6 @@ int connectToServer(struct sockaddr_in *serv_addr, SOCKET client_socket, const c
     inet_pton(AF_INET, server_ip, &serv_addr->sin_addr);
     if (connect(client_socket, (struct sockaddr *)serv_addr, sizeof(*serv_addr)) < 0) {
         printf("\nConnection Failed. \n");
-        printf("%i", client_socket);
         closesocket(client_socket);
         WSACleanup();
         return 0;
