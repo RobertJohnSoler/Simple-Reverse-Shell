@@ -61,7 +61,6 @@ int main(){
                     if (!read){
                         break;
                     }
-                    // strcat(output_buff, line);
                     sendMsg(client_socket, line);
                 }
             } else {
@@ -74,7 +73,6 @@ int main(){
             getcwd(cwd, 1024);
             strcat(output_buff, "cURR_dIR");
             strcat(output_buff, cwd);
-            // printf("output buffer: %s\n", output_buff);
         }
         sendMsg(client_socket, output_buff);
         pclose(output);
